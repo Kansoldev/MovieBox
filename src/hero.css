@@ -1,0 +1,21 @@
+.hero-area {
+  position: relative;
+  z-index: 1;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  background-position-y: center;
+}
+
+.hero-area::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
