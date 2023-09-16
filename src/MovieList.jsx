@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
@@ -55,40 +56,54 @@ const MovieList = () => {
     <div className="grid gap-10 xl:gap-20 min-[450px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:grid-rows-3 mt-10">
       {movies.map((movie, index) => {
         return (
-          <div key={movie.id}>
-            <div className="movie-poster">
-              <img
-                src={`https://www.themoviedb.org/t/p/w220_and_h330_face/${movie.poster_path}`}
-                className="w-full"
-              />
-            </div>
-
-            <div className="movie-details">
-              <span className="inline-block text-slate-500 my-2 text-sm">
-                USA, {new Date(movie.release_date).getFullYear()}
-              </span>
-
-              <h1 className="font-bold text-xl">{movie.title}</h1>
-
-              <div className="flex justify-between my-2">
-                <div className="flex">
-                  <img src={`/img/imdb.png`} className="object-contain mr-3" />
-                  <span className="text-sm">
-                    {movie.vote_average * 10} / 100
-                  </span>
-                </div>
-
-                <div className="flex">
-                  <img src={`/img/apple.png`} className="object-contain mr-3" />
-                  <span className="text-sm">97%</span>
-                </div>
+          <Link to={`/movies/${movie.id}`} key={movie.id}>
+            <div className="card" data-testid="movie-card">
+              <div className="movie-poster">
+                <img
+                  src={`https://www.themoviedb.org/t/p/w220_and_h330_face/${movie.poster_path}`}
+                  className="w-full"
+                  date-testid="movie-poster"
+                />
               </div>
 
-              <div className="categories text-slate-500">
-                {getGenres(movie.genre_ids)}
+              <div className="movie-details">
+                <span
+                  className="inline-block text-slate-500 my-2 text-sm"
+                  data-testid="movie-release-date"
+                >
+                  USA, {new Date(movie.release_date).getFullYear()}
+                </span>
+
+                <h1 className="font-bold text-xl" data-testid="movie-title">
+                  {movie.title}
+                </h1>
+
+                <div className="flex justify-between my-2">
+                  <div className="flex">
+                    <img
+                      src={`/img/imdb.png`}
+                      className="object-contain mr-3"
+                    />
+                    <span className="text-sm">
+                      {movie.vote_average * 10} / 100
+                    </span>
+                  </div>
+
+                  <div className="flex">
+                    <img
+                      src={`/img/apple.png`}
+                      className="object-contain mr-3"
+                    />
+                    <span className="text-sm">97%</span>
+                  </div>
+                </div>
+
+                <div className="categories text-slate-500">
+                  {getGenres(movie.genre_ids)}
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>
