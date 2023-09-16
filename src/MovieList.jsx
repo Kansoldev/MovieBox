@@ -1,57 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const MovieList = () => {
-  const [movies, setMovies] = useState([
-    {
-      id: 1,
-      imgUrl: "/img/poster-1.png",
-      title: "Stranger Things",
-      releaseDate: "USA, 2016 - Current",
-      ratings: "86.0 / 100",
-      stat: "97%",
-      categories: "Action, Adventure, Horror",
+  const [movies, setMovies] = useState([]);
+  const [genres, setGenres] = useState([]);
+
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NWVjNzNjYjg3Yzg0MGFhMjI2YTcxMGE0ZWExYTBkNSIsInN1YiI6IjY1MDIyMGQ0ZGI0ZWQ2MTAzNjNmYTQ1NiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3-JSCK_uZ1a-zwT4LbWQtFgPEe5Vm72oNnF6jo73hNk",
     },
-    {
-      id: 2,
-      imgUrl: "/img/poster-2.png",
-      title: "Batman Begins",
-      releaseDate: "USA, 2005",
-      ratings: "82.0 / 100",
-      stat: "70%",
-      categories: "Action, Adventure",
+  };
+
+  const options2 = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NWVjNzNjYjg3Yzg0MGFhMjI2YTcxMGE0ZWExYTBkNSIsInN1YiI6IjY1MDIyMGQ0ZGI0ZWQ2MTAzNjNmYTQ1NiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3-JSCK_uZ1a-zwT4LbWQtFgPEe5Vm72oNnF6jo73hNk",
     },
-    {
-      id: 3,
-      imgUrl: "/img/poster-3.png",
-      title: "Spider-Man: Into the Spider Verse",
-      releaseDate: "USA, 2018",
-      ratings: "84.0 / 100",
-      stat: "87%",
-      categories: "Animation, Action, Adventure",
-    },
-    {
-      id: 4,
-      imgUrl: "/img/poster-4.png",
-      title: "Dunkirk",
-      releaseDate: "USA, 2017",
-      ratings: "78.0 / 100",
-      stat: "94%",
-      categories: "Action, Drama, History",
-    },
-  ]);
+  };
+
+  useEffect(() => {
+    fetch(
+      "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1",
+      options
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setMovies(data.results.slice(0, 10));
+      })
+      .catch((err) => console.error(err));
+
+    fetch("https://api.themoviedb.org/3/genre/movie/list?language=en", options2)
+      .then((response) => response.json())
+      .then((data) => setGenres(data.genres))
+      .catch((err) => console.error(err));
+  }, []);
+
+  function getGenres(arrVal) {
+    let genreArr = [];
+
+    genres.forEach((genre, index) => {
+      if (arrVal.indexOf(genre.id) !== -1) {
+        genreArr.push(genres[index].name);
+      }
+    });
+
+    return genreArr.join(", ");
+  }
 
   return (
     <div className="grid gap-10 xl:gap-20 min-[450px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:grid-rows-3 mt-10">
-      {movies.map((movie) => {
+      {movies.map((movie, index) => {
         return (
           <div key={movie.id}>
             <div className="movie-poster">
-              <img src={movie.imgUrl} className="w-full" />
+              <img
+                src={`https://www.themoviedb.org/t/p/w220_and_h330_face/${movie.poster_path}`}
+                className="w-full"
+              />
             </div>
 
             <div className="movie-details">
               <span className="inline-block text-slate-500 my-2 text-sm">
-                {movie.releaseDate}
+                USA, {new Date(movie.release_date).getFullYear()}
               </span>
 
               <h1 className="font-bold text-xl">{movie.title}</h1>
@@ -59,17 +73,19 @@ const MovieList = () => {
               <div className="flex justify-between my-2">
                 <div className="flex">
                   <img src={`/img/imdb.png`} className="object-contain mr-3" />
-                  <span className="text-sm">{movie.ratings}</span>
+                  <span className="text-sm">
+                    {movie.vote_average * 10} / 100
+                  </span>
                 </div>
 
                 <div className="flex">
                   <img src={`/img/apple.png`} className="object-contain mr-3" />
-                  <span className="text-sm">{movie.stat}</span>
+                  <span className="text-sm">97%</span>
                 </div>
               </div>
 
               <div className="categories text-slate-500">
-                {movie.categories}
+                {getGenres(movie.genre_ids)}
               </div>
             </div>
           </div>
