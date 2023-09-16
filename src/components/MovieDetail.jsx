@@ -1,6 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const MovieDetail = () => {
+  const [movie, setMovie] = useState([]);
+  const { id } = useParams();
+
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NWVjNzNjYjg3Yzg0MGFhMjI2YTcxMGE0ZWExYTBkNSIsInN1YiI6IjY1MDIyMGQ0ZGI0ZWQ2MTAzNjNmYTQ1NiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3-JSCK_uZ1a-zwT4LbWQtFgPEe5Vm72oNnF6jo73hNk",
+    },
+  };
+
+  useEffect(() => {
+    fetch(
+      `https://api.themoviedb.org/3/movie/${id}?language=en-US&append_to_response=videos,credits`,
+      options
+    )
+      .then((response) => response.json())
+      .then((data) => setMovie(data))
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
     <>
       <div className="flex">
@@ -81,21 +104,21 @@ const MovieDetail = () => {
             style={{ gridArea: "2 / 1 / 3 / 2" }}
           >
             <div className="main-details flex">
-              <p className="mr-10 font-bold">
-                Top Gun: Maverick • 2022 • PG-13 • 2h 10m
+              <p data-testid="movie-title" className="mr-10 font-bold">
+                {movie.title} •{" "}
+                <span data-testid="movie-release-date">
+                  {new Date(movie.release_date).getFullYear()}
+                </span>{" "}
+                • PG-13 •{" "}
+                <span data-testid="movie-runtime">{movie.runtime}m</span>
               </p>
 
               <span className="mr-5">Action</span>
               <span>Drama</span>
             </div>
 
-            <p className="movie-description">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quae
-              maiores dignissimos neque voluptatibus accusantium esse sit eius
-              quibusdam eaque eos! Nisi dolorum explicabo accusamus veniam sed,
-              voluptatem consequuntur porro odio aspernatur debitis, assumenda
-              iusto ab non quisquam reprehenderit delectus voluptatum, maiores
-              aut? Nisi qui illo, voluptates commodi hic aliquam nesciunt.
+            <p data-testid="movie-overview" className="movie-description">
+              {movie.overview}
             </p>
 
             <ul>
